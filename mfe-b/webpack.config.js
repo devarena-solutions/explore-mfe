@@ -7,7 +7,7 @@ module.exports = {
   mode: 'development',
   devtool: 'source-map',
   devServer: { port: 3002, historyApiFallback: true, static: path.resolve(__dirname, 'public') },
-  output: { publicPath: 'auto', clean: true },
+  output: { publicPath: 'auto', clean: true, uniqueName: 'mfeB' },
   resolve: { extensions: ['.tsx', '.ts', '.js'] },
   module: {
     rules: [
@@ -24,8 +24,8 @@ module.exports = {
       },
       shareScope: 'react19',
       shared: {
-        react: { singleton: true, requiredVersion: '^19.0.0', eager: false },
-        'react-dom': { singleton: true, requiredVersion: '^19.0.0', eager: false }
+        react: { singleton: true, requiredVersion: '^19.0.0', eager: false, strictVersion: false },
+        'react-dom': { singleton: true, requiredVersion: '^19.0.0', eager: false, strictVersion: false }
       }
     }),
     new HtmlWebpackPlugin({ template: path.resolve(__dirname, 'public/index.html') })

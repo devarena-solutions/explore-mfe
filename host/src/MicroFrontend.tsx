@@ -1,44 +1,23 @@
 // host/src/MicroFrontend.tsx
 import React, { useEffect, useRef, useState } from "react";
 
-/**
- * Configure each remote here.
- * - global: window variable set by the remote container (ModuleFederationPlugin `name`)
- * - url:    remoteEntry URL (used if the container isn't loaded yet)
- * - expose: exposed module to get (default: "./mount")
- * - scope:  share scope name; use "default" for same-major React, or "react19" etc for dual scopes
- */
 const REMOTES = {
-  mfeA: {
-    global: "mfeA",
-    url: "http://localhost:3001/remoteEntry.js",
-    expose: "./mount",
-    scope: "react18",
-  },
-  mfeB: {
-    global: "mfeB",
-    url: "http://localhost:3002/remoteEntry.js",
-    expose: "./mount",
-    scope: "react19", // 👈 custom scope for React 19 island
-  },
+  mfeA: { global: "mfeA", url: "http://localhost:3001/remoteEntry.js", expose: "./mount", scope: "react18" },
+  mfeB: { global: "mfeB", url: "http://localhost:3002/remoteEntry.js", expose: "./mount", scope: "react19" },
 } as const;
 
 type RemoteKey = keyof typeof REMOTES;
 
 async function loadRemoteEntry(url: string, globalVar: string) {
-  if ((window as any)[globalVar]) return; // already loaded
+  if ((window as any)[globalVar]) return;
   await new Promise<void>((resolve, reject) => {
     const s = document.createElement("script");
-    s.src = url;
-    s.type = "text/javascript";
-    s.async = true;
+    s.src = url; s.async = true; s.type = "text/javascript";
     s.onload = () => resolve();
     s.onerror = () => reject(new Error(`Failed to load ${url}`));
     document.head.appendChild(s);
   });
-  if (!(window as any)[globalVar]) {
-    throw new Error(`Remote container ${globalVar} did not initialize`);
-  }
+  if (!(window as any)[globalVar]) throw new Error(`Remote container ${globalVar} did not initialize`);
 }
 
 export function MicroFrontend({ remote }: { remote: RemoteKey }) {
@@ -53,22 +32,20 @@ export function MicroFrontend({ remote }: { remote: RemoteKey }) {
       try {
         const cfg = REMOTES[remote];
 
-        // 1) Ensure the remote container script is present
+        // Ensure container present
         await loadRemoteEntry(cfg.url, cfg.global);
 
-        // 2) Initialize the correct share scope (default or custom)
+        // IMPORTANT: init the correct share scope BEFORE get()
         // @ts-ignore
-        await __webpack_init_sharing__(cfg.scope || "default");
-
+        await __webpack_init_sharing__(cfg.scope);
         const container = (window as any)[cfg.global];
         // @ts-ignore
-        await container.init(__webpack_share_scopes__[cfg.scope || "default"]);
+        await container.init(__webpack_share_scopes__[cfg.scope]);
 
-        // 3) Get exposed module factory and call it
-        const factory = await container.get(cfg.expose || "./mount");
+        // Now get the exposed module and execute its factory
+        const factory = await container.get(cfg.expose);
         const { mount } = factory();
 
-        // 4) Mount into our slot
         if (!alive || !ref.current) return;
         unmount = mount(ref.current).unmount;
       } catch (e) {
@@ -76,12 +53,11 @@ export function MicroFrontend({ remote }: { remote: RemoteKey }) {
       }
     })();
 
-    // Cleanup with microtask deferral (avoids “synchronously unmount” warning)
+    // Defer unmount to avoid React warning during route swaps
     return () => {
       alive = false;
       if (unmount) {
-        const fn = unmount;
-        unmount = undefined;
+        const fn = unmount; unmount = undefined;
         (typeof queueMicrotask === "function" ? queueMicrotask : (cb: any) => setTimeout(cb, 0))(fn);
       }
     };

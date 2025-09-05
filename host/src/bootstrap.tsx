@@ -1,4 +1,6 @@
 import React from "react";
+console.log('[host] React', (React as any).version);  // should log 18.x
+
 import { createRoot } from "react-dom/client";
 import App from "./App";
 

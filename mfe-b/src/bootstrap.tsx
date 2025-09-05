@@ -1,4 +1,6 @@
 import React from 'react';
+console.log('[mfeB] React', (React as any).version);  // should log 19.x
+
 import { createRoot, Root } from 'react-dom/client';
 import AppB from './AppB';
 

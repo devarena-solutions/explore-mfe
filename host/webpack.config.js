@@ -7,7 +7,11 @@ module.exports = {
   mode: 'development',
   devtool: 'source-map',
   devServer: { port: 3000, historyApiFallback: true, static: false },
-  output: { publicPath: 'auto', clean: true },
+  output: { 
+    publicPath: 'auto', 
+    clean: true,
+    uniqueName: 'host'
+   },
   resolve: { extensions: ['.tsx', '.ts', '.js'] },
   module: {
     rules: [
@@ -23,8 +27,8 @@ module.exports = {
       },
       shareScope: 'react18',
       shared: {
-        react: { singleton: true, requiredVersion: '^18.3.1', eager: false },
-        'react-dom': { singleton: true, requiredVersion: '^18.3.1', eager: false }
+        react: { singleton: true, requiredVersion: '^18.3.1', eager: false, strictVersion: false },
+        'react-dom': { singleton: true, requiredVersion: '^18.3.1', eager: false, strictVersion: false }
       }
     }),
     new HtmlWebpackPlugin({ template: path.resolve(__dirname, 'public/index.html') })
