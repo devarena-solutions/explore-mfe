@@ -23,7 +23,10 @@ module.exports = {
       name: 'host',
       remotes: {
         mfeA: 'mfeA@http://localhost:3001/remoteEntry.js',
-        mfeB: 'mfeB@http://localhost:3002/remoteEntry.js'
+        mfeB: {
+          external: 'mfeB@http://localhost:3002/remoteEntry.js',
+          shareScope: 'react19'
+        }
       },
       shareScope: 'react18',
       shared: {
