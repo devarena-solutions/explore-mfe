@@ -1,0 +1,12 @@
+{
+    "name": "mfe-own-react-roots-starter",
+    "private": true,
+    "workspaces": ["host", "mfe-a", "mfe-b"],
+    "devDependencies": {
+      "concurrently": "^8.2.2"
+    },
+    "scripts": {
+      "dev": "concurrently -n host,mfe-a,mfe-b -c auto \"yarn --cwd host dev\" \"yarn --cwd mfe-a dev\" \"yarn --cwd mfe-b dev\"",
+      "build": "yarn --cwd host build && yarn --cwd mfe-a build && yarn --cwd mfe-b build"
+    }
+  }
