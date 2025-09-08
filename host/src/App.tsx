@@ -15,8 +15,8 @@ export default function App() {
       <Suspense fallback={<div>Loading…</div>}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/a" element={<MicroFrontend remote="mfeA" />} />
-          <Route path="/b" element={<MicroFrontend remote="mfeB" />} />
+          <Route path="/a/*" element={<MicroFrontend remote="mfeA" />} />
+          <Route path="/b/*" element={<MicroFrontend remote="mfeB" />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

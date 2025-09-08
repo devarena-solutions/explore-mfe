@@ -31,7 +31,8 @@ module.exports = {
       shareScope: 'react18',
       shared: {
         react: { singleton: true, requiredVersion: '^18.3.1', eager: false, strictVersion: false },
-        'react-dom': { singleton: true, requiredVersion: '^18.3.1', eager: false, strictVersion: false }
+        'react-dom': { singleton: true, requiredVersion: '^18.3.1', eager: false, strictVersion: false },
+        'react-router-dom': { singleton: true, requiredVersion: '^7.8.2', eager: false, strictVersion: false }
       }
     }),
     new HtmlWebpackPlugin({ template: path.resolve(__dirname, 'public/index.html') })
