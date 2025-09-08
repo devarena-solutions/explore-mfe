@@ -1,6 +1,6 @@
 // host/src/MicroFrontend.tsx
 import React, { useEffect, useRef, useState } from "react";
-import { loadRemote } from "./mf";
+import { loadRemote } from "./utils/loadMFE";
 
 const REMOTES = {
   mfeA: { remote: "http://localhost:3001/remoteEntry.js", exposed: "./mount", shareScope: "react18" },
