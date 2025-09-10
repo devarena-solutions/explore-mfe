@@ -3,8 +3,18 @@ import React, { useEffect, useRef, useState } from "react";
 import { loadRemote } from "./utils/loadMFE";
 
 const REMOTES = {
-  mfeA: { remote: "http://localhost:3001/remoteEntry.js", exposed: "./mount", shareScope: "react18" },
-  mfeB: { remote: "http://localhost:3002/remoteEntry.js", exposed: "./mount", shareScope: "react19" },
+  mfeA: {
+    url: "http://localhost:3001/remoteEntry.js",
+    scope: "mfeA",
+    module: "./mount",
+    shareScope: "react18",
+  },
+  mfeB: {
+    url: "http://localhost:3002/remoteEntry.js",
+    scope: "mfeB",
+    module: "./mount",
+    shareScope: "react19",
+  },
 } as const;
 
 type RemoteKey = keyof typeof REMOTES;
@@ -21,8 +31,9 @@ export function MicroFrontend({ remote }: { remote: RemoteKey }) {
       try {
         const cfg = REMOTES[remote];
         const { mount } = await loadRemote<{ mount: (el: HTMLElement) => { unmount: () => void } }>({
-          remote: cfg.remote,
-          exposed: cfg.exposed,
+          url: cfg.url,
+          scope: cfg.scope,
+          module: cfg.module,
           shareScope: cfg.shareScope,
         });
 
